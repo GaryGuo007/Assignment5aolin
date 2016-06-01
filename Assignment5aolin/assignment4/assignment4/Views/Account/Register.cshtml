@@ -34,19 +34,23 @@
     <div class="form-group">
         @Html.LabelFor(m => m.IsLeader, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            
+
             @Html.MemberLevelDropdownList(m => m.IsLeader, new SelectList("value", "text"))
-            
         </div>
     </div>
-
-    <p><a class="btn btn-default" href="/Home/InitiateCreditTransaction">Initiate a Credit Transaction</a></p>
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register" />
+            <p>
+                <a class="btn btn-default" href="/Home/InitiateCreditTransaction">Initiate a Credit Transaction</a>
+            </p>
         </div>
     </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" class="btn btn-default" value="Register" />
+                </div>
+            </div>
 }
 
 @section Scripts {
