@@ -17,8 +17,8 @@ namespace assignment4.API
         // GET api/<controller>
         public List<EditableProduct> Get()
         {
-            if (HttpContext.Current.Cache["ProductList"] != null)
-                return (List<EditableProduct>)HttpContext.Current.Cache["ProductList"];
+            //if (HttpContext.Current.Cache["ProductList"] != null)
+            //    return (List<EditableProduct>)HttpContext.Current.Cache["ProductList"];
 
             using (Assignment4Context context = new Assignment4Context())
             {
