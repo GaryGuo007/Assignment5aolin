@@ -13,7 +13,7 @@
 
 </div>
 
-<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#ProductModal">Add Product</button>
+<button id="addProjectButton" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#ProductModal">Add Project</button>
 
 <div id="ProductModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -21,22 +21,22 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Add New Product/Project</h4>
+                <h4 class="modal-title">Add New Project</h4>
             </div>
             <div class="modal-body">
                 @using (Ajax.BeginForm("", "api/Deals/", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#ProductModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
                 {
 
                     <fieldset class="form-group">
-                        <label for="ProductTitle">Product/Project Title</label>
+                        <label for="ProductTitle">Project Title</label>
                         @Html.TextBoxFor(t => t.Name, new { @class = "form-control" })
                     </fieldset>
                     <fieldset class="form-group">
-                        <label for="ProductDescription">Product/Project Information</label>
+                        <label for="ProductDescription">Project Information</label>
                         @Html.TextAreaFor(t => t.Description, new { @class = "form-control" })
                     </fieldset>
                     <fieldset class="form-group">
-                        <label for="ProductDescription">Product/Project Payable</label>
+                        <label for="ProductDescription">Project Payable</label>
                         @Html.PayableDropDownList(t=> t.Payable, new SelectList("value","text")) 
                     </fieldset>
                     <button type="submit" class="btn btn-primary">Submit</button>
@@ -75,7 +75,7 @@
                         @Html.PayableDropDownList(t => t.Payable, new SelectList("value", "text"))
                     </fieldset>
                 <fieldset class="form-group">
-                    <label for="JoinedMemberList">Joined Members</label>
+                    <label for="JoinedMemberList">Joined Member</label>
                     @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
                 </fieldset>
 
@@ -99,6 +99,14 @@
 {
 
     <script type="text/javascript">
+        // make it work
+        function hideAddProjectButton() {
+            if (!product.IsEditable && product.IsJoinable) {
+                $('#addProjectButton').hide();
+            } else {
+                $('#addProjectButton').show();
+            }
+        }
 
 
         $("#loadpayProducts").click(function () {
@@ -124,28 +132,31 @@
             })
         });
 
+        
         //Make an ajax call to load the tips
         function loadallProducts() {
             $("#ProductsContainer").empty();
             $.getJSON("/api/Deals/", function (data) {
                 $.each(data, function (i, product) {
                     $("#ProductsContainer").append("<div id='" + product.Id + "' class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>" + product.Name + "</h3></div><div class='panel-body'>" + product.Description +"</div><div></div></div>" );
+                    // Admin
                     if (product.IsEditable && product.IsJoinable)
                     {
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
-
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
-
                     }
+                    // Leader
                     if (product.IsEditable && !product.IsJoinable) {
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
 
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
 
                     }
-
-
+                    // Seeker
+                    if (!product.IsEditable && product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+                    }
                 });
             });
         }
@@ -158,20 +169,23 @@
                         $("#ProductsContainer").append("<div id='" + product.Id + "' class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>" +'Pay-product/project Name :  '+ product.Name +"</h3></div><div class='panel-body'>" + product.Description + "</div><div></div></div>")
                     }
                     
+                    // Admin
                     if (product.IsEditable && product.IsJoinable) {
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
-
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
-
                     }
+                    // Leader
                     if (product.IsEditable && !product.IsJoinable) {
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
 
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
 
                     }
-                    
+                    // Seeker
+                    if (!product.IsEditable && product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+                    }
 
                 });
             });
@@ -186,20 +200,23 @@
                         $("#ProductsContainer").append("<div id='" + product.Id + "' class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>" + 'Unpay-product/project Name :  ' + product.Name + "</h3></div><div class='panel-body'>" + product.Description + "</div><div></div></div>")
                     };
 
+                    // Admin
                     if (product.IsEditable && product.IsJoinable) {
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
-
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
-
                     }
+                    // Leader
                     if (product.IsEditable && !product.IsJoinable) {
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
 
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
 
                     }
-
+                    // Seeker
+                    if (!product.IsEditable && product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+                    }
                 });
             });
         }
