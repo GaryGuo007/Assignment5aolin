@@ -50,6 +50,50 @@
     </div>
 </div>
 
+
+<div id="JoinModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Product</h4>
+            </div>
+            <div class="modal-body">
+                @using (Ajax.BeginForm("", "api/Deals/", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#JoinModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
+                {
+
+                    <fieldset disabled class="form-group">
+                        @Html.HiddenFor(t => t.Id)
+                        <label for="ProductTitle">Product Title</label>
+                        @Html.TextBoxFor(t => t.Name, new { @class = "form-control" })
+                    </fieldset>
+                    <fieldset disabled class="form-group">
+                        <label for="ProductDescription">Product Information</label>
+                        @Html.TextAreaFor(t => t.Description, new { @class = "form-control" })
+                    </fieldset>
+                    <fieldset disabled class="form-group">
+                        <label for="ProductDescription">Product/Project Information</label>
+                        @Html.PayableDropDownList(t => t.Payable, new SelectList("value", "text"))
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="JoinedMemberList">Joined Member</label>
+                        @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
+                    </fieldset>
+
+                    <button type="submit" class="btn btn-primary">Update</button>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
 <div id="EditModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -90,9 +134,16 @@
     </div>
 </div>
 
-<button id="loadpayProducts" type="button">Pay product only</button>
-<button id="loadunpayProducts" type="button">Unpay product/project only</button>
-<button id="loadallProducts" type="button">All product/project</button>
+
+
+
+
+
+
+
+<button id="loadpayProducts" type="button">Pay project only</button>
+<button id="loadunpayProducts" type="button">Unpay project only</button>
+<button id="loadallProducts" type="button">All project</button>
 
 
 @section Scripts
@@ -128,6 +179,10 @@
             })
 
             $('#EditModal').on('hidden.bs.modal', function () {
+                loadallProducts();
+            })
+
+            $('#JoinModal').on('hidden.bs.modal', function () {
                 loadallProducts();
             })
         });
@@ -239,11 +294,12 @@
                 type: 'GET',
                 success: function (result) {
                     alert(result.Name);
-                    $('#EditModal').find('#Id').val(result.Id);
-                    $('#EditModal').find('#Name').val(result.Name);
-                    $('#EditModal').find('#Description').val(result.Description);
-                    $('#EditModal').find('#Payable').val(result.Payable);
-                    $('#EditModal').modal('show');
+                    $('#JoinModal').find('#Id').val(result.Id);
+                    $('#JoinModal').find('#Name').val(result.Name);
+                    $('#JoinModal').find('#Description').val(result.Description);
+                    $('#JoinModal').find('#Payable').val(result.Payable);
+                    $('#JoinModal').find('#JoinedMemberList').val(result.JoinedMemberList);
+                    $('#JoinModal').modal('show');
                 },
                 error: function (result) {
                     alert("Unable to load Product.")
@@ -261,6 +317,7 @@
                     $('#EditModal').find('#Name').val(result.Name);
                     $('#EditModal').find('#Description').val(result.Description);
                     $('#EditModal').find('#Payable').val(result.Payable);
+                    $('#EditModal').find('#JoinedMemberList').val(result.JoinedMemberList);
                     $('#EditModal').modal('show');
                 },
                 error: function (result) {

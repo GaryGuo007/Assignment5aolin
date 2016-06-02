@@ -17,8 +17,8 @@ namespace assignment4.API
         // GET api/<controller>
         public List<EditableProduct> Get()
         {
-            //if (HttpContext.Current.Cache["ProductList"] != null)
-            //    return (List<EditableProduct>)HttpContext.Current.Cache["ProductList"];
+            if (HttpContext.Current.Cache["ProductList"] != null)
+                return (List<EditableProduct>)HttpContext.Current.Cache["ProductList"];
 
             using (Assignment4Context context = new Assignment4Context())
             {
@@ -27,29 +27,31 @@ namespace assignment4.API
                 var isSeeker = this.User.IsInRole("Seeker");
 
                 var userId = ((ClaimsPrincipal)this.User).FindFirst(ClaimTypes.NameIdentifier).Value;
-                List<EditableProduct> products = context.Products.Select(t => new EditableProduct {IsJoinable = isSeeker, IsEditable = isAdmin, Id = t.Id, AddedDate = t.AddedDate, ApplicationUserId = t.ApplicationUserId, Payable = t.Payable, Description = t.Description, Name = t.Name }).ToList();
+                List<EditableProduct> products = context.Products.Select(t => new EditableProduct { IsJoinable = isSeeker, IsEditable = isAdmin, Id = t.Id, AddedDate = t.AddedDate, ApplicationUserId = t.ApplicationUserId, Payable = t.Payable, Description = t.Description, Name = t.Name }).ToList();
                 HttpContext.Current.Cache["ProductList"] = products;
                if (!isAdmin)
                 {
                     foreach (EditableProduct product in products)
                     {
-                        //product.IsJoinable = isSeeker;
-                        //if (product.ApplicationUserId == userId)
-                        //    product.IsEditable = true;
-                        if (User.IsInRole("Admin") || (product.ApplicationUserId == userId))
+                        product.IsJoinable = isSeeker;
+                        if (product.ApplicationUserId == userId)
                         {
-                            product.IsEditable = true;
-                            product.IsJoinable = true;
-                        }
-                        if (User.IsInRole("Seeker") || (product.ApplicationUserId == userId))
-                        {
-                            product.IsEditable = false;
-                            product.IsJoinable = true;
-                        }
-                        if (User.IsInRole("Leader") || (product.ApplicationUserId == userId))
-                        {
-                            product.IsEditable = true;
-                            product.IsJoinable = false;
+                            //    product.IsEditable = true;
+                            if (User.IsInRole("Admin") || (product.ApplicationUserId == userId))
+                            {
+                                product.IsEditable = true;
+                                product.IsJoinable = true;
+                            }
+                            if (User.IsInRole("Seeker") || (product.ApplicationUserId == userId))
+                            {
+                                product.IsEditable = false;
+                                product.IsJoinable = true;
+                            }
+                            if (User.IsInRole("Leader") || (product.ApplicationUserId == userId))
+                            {
+                                product.IsEditable = true;
+                                product.IsJoinable = false;
+                            }
                         }
                     }
                 }
@@ -61,12 +63,12 @@ namespace assignment4.API
         public EditableProduct Get(int id)
         {
             var userId = ((ClaimsPrincipal)this.User).FindFirst(ClaimTypes.NameIdentifier).Value;
-            //if (HttpContext.Current.Cache["Product" + id] != null)
-            //    return (EditableProduct)HttpContext.Current.Cache["Product" + id];
+            if (HttpContext.Current.Cache["Product" + id] != null)
+                return (EditableProduct)HttpContext.Current.Cache["Product" + id];
             using (Assignment4Context context = new Assignment4Context())
             {
                 Product product = context.Products.Find(id);
-                var eProduct = new EditableProduct { IsJoinable = false, IsEditable = false, Version = product.Timestamp, Id = product.Id, AddedDate = product.AddedDate, ApplicationUserId = product.ApplicationUserId, Payable = product.Payable, Description = product.Description, Name = product.Name };
+                var eProduct = new EditableProduct { /*JoinedMemberList = product.JoinedMemberList,*/ IsJoinable = false, IsEditable = false, Version = product.Timestamp, Id = product.Id, AddedDate = product.AddedDate, ApplicationUserId = product.ApplicationUserId, Payable = product.Payable, Description = product.Description, Name = product.Name };
                 HttpContext.Current.Cache["Product" + id] = eProduct;
                 if (User.IsInRole("Admin") || (product.ApplicationUserId == userId))
                 {
@@ -151,7 +153,7 @@ namespace assignment4.API
         {
             using (Assignment4Context context = new Assignment4Context())
             {
-                //if (User.IsInRole("Seeker"))
+              //  if (!User.IsInRole("Seeker"))
                 {
                     var product = context.Products.Find(id);
                     context.Products.Remove(product);
