@@ -17,7 +17,7 @@ namespace assignment4.Helpers
             List<SelectListItem> memberlevellist = new List<SelectListItem>
                     {
                         new SelectListItem() { Value= "Leader",Text= "Leader"},
-                         new SelectListItem() {Value="Member",Text="Seeker"},
+                         new SelectListItem() {Value="Seeker",Text="Seeker"},
                     };
 
             return html.DropDownList("Register as", memberlevellist);
@@ -29,7 +29,7 @@ namespace assignment4.Helpers
                           {
 
                              {"Leader", " Leader"},
-                             {"Member", " Seeker"},
+                             {"Seeker", " Seeker"},
 
                           };
 

@@ -31,8 +31,8 @@ namespace CodeFirst.Helpers
         {
             var roles = new List<ApplicationRole> {
                new ApplicationRole {Name="Admin", Description="Admin"},
+               new ApplicationRole {Name="Seeker", Description="Seeker"},
                new ApplicationRole {Name="Leader", Description="Leader"},
-               new ApplicationRole {Name="Member", Description="Member"},
             };
 
             return roles;

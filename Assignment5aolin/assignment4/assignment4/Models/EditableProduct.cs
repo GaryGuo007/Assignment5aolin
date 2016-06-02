@@ -16,7 +16,11 @@ namespace assignment4.Models
         public String Payable { get; set; }
         public DateTime AddedDate { get; set; }
         public Boolean IsEditable { get; set; }
-        
+        public Boolean IsJoinable { get; set; }
+
+        public String[] JoinedMemberList { get; set; }
+
+
         public byte[] Version { get; set; }
     }
 }

@@ -23,14 +23,16 @@ namespace assignment4.API
             using (Assignment4Context context = new Assignment4Context())
             {
                 var isAdmin = this.User.IsInRole("Admin");
-                 
+                 var isLeader = this.User.IsInRole("Leader");
+                var isSeeker = this.User.IsInRole("Seeker");
                 var userId = ((ClaimsPrincipal)this.User).FindFirst(ClaimTypes.NameIdentifier).Value;
-                List<EditableProduct> products = context.Products.Select(t => new EditableProduct { IsEditable = isAdmin, Id = t.Id, AddedDate = t.AddedDate, ApplicationUserId = t.ApplicationUserId, Payable = t.Payable, Description = t.Description, Name = t.Name }).ToList();
+                List<EditableProduct> products = context.Products.Select(t => new EditableProduct {IsJoinable=isSeeker, IsEditable = isAdmin, Id = t.Id, AddedDate = t.AddedDate, ApplicationUserId = t.ApplicationUserId, Payable = t.Payable, Description = t.Description, Name = t.Name }).ToList();
                 HttpContext.Current.Cache["ProductList"] = products;
                if (!isAdmin)
                 {
                     foreach (EditableProduct product in products)
                     {
+                        product.IsJoinable = isSeeker;
                         if (product.ApplicationUserId == userId)
                             product.IsEditable = true;
                     }
@@ -48,11 +50,18 @@ namespace assignment4.API
             using (Assignment4Context context = new Assignment4Context())
             {
                 Product product = context.Products.Find(id);
-                var eProduct = new EditableProduct { IsEditable = false, Version = product.Timestamp, Id = product.Id, AddedDate = product.AddedDate, ApplicationUserId = product.ApplicationUserId, Payable = product.Payable, Description = product.Description, Name = product.Name };
+                var eProduct = new EditableProduct { IsJoinable=false,IsEditable = false, Version = product.Timestamp, Id = product.Id, AddedDate = product.AddedDate, ApplicationUserId = product.ApplicationUserId, Payable = product.Payable, Description = product.Description, Name = product.Name };
                 HttpContext.Current.Cache["Product" + id] = eProduct;
                 if (User.IsInRole("Admin") || (product.ApplicationUserId == userId))
                 {
                     eProduct.IsEditable = true;
+                    eProduct.IsJoinable = true;
+                }
+                if (User.IsInRole("Seeker") || (product.ApplicationUserId == userId))
+                {
+                    eProduct.IsEditable = false;
+                    eProduct.IsJoinable = true;
+
                 }
                 return eProduct;
             }

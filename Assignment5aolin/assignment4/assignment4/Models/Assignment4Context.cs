@@ -12,7 +12,7 @@ namespace assignment4.Models
     public class Assignment4Context : IdentityDbContext<ApplicationUser>
     {
         public Assignment4Context()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("DefaultConnection3"/*, throwIfV1Schema: false*/)
         {
             Database.SetInitializer<Assignment4Context>(new MembershipDatabaseInitializer());
         }

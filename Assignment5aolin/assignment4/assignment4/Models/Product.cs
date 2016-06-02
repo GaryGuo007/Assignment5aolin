@@ -16,6 +16,7 @@ namespace assignment4.Models
         public String ApplicationUserId { get; set; }
         public String Payable { get; set; }
         public DateTime AddedDate { get; set; }
+        public String[] JoinedMemberList{get;set;}
 
         [Timestamp]
         public byte[] Timestamp { get; set; }

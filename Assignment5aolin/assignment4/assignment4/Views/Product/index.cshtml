@@ -7,7 +7,7 @@
 }
 
 
-<h2>Current Products</h2>
+<h2>Current Projects</h2>
 
 <div id="ProductsContainer">
 
@@ -74,6 +74,10 @@
                         <label for="ProductDescription">Product/Project Information</label>
                         @Html.PayableDropDownList(t => t.Payable, new SelectList("value", "text"))
                     </fieldset>
+                <fieldset class="form-group">
+                    <label for="JoinedMemberList">Joined Members</label>
+                    @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
+                </fieldset>
 
                     <button type="submit" class="btn btn-primary">Update</button>
                 }
@@ -126,13 +130,21 @@
             $.getJSON("/api/Deals/", function (data) {
                 $.each(data, function (i, product) {
                     $("#ProductsContainer").append("<div id='" + product.Id + "' class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>" + product.Name + "</h3></div><div class='panel-body'>" + product.Description +"</div><div></div></div>" );
-                    if (product.IsEditable)
+                    if (product.IsEditable && product.IsJoinable)
                     {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
+
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+
+                    }
+                    if (product.IsEditable && !product.IsJoinable) {
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
 
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
 
                     }
+
 
                 });
             });
@@ -146,12 +158,20 @@
                         $("#ProductsContainer").append("<div id='" + product.Id + "' class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>" +'Pay-product/project Name :  '+ product.Name +"</h3></div><div class='panel-body'>" + product.Description + "</div><div></div></div>")
                     }
                     
-                    if (product.IsEditable) {
+                    if (product.IsEditable && product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
+
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+
+                    }
+                    if (product.IsEditable && !product.IsJoinable) {
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
 
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
 
                     }
+                    
 
                 });
             });
@@ -166,7 +186,14 @@
                         $("#ProductsContainer").append("<div id='" + product.Id + "' class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>" + 'Unpay-product/project Name :  ' + product.Name + "</h3></div><div class='panel-body'>" + product.Description + "</div><div></div></div>")
                     };
 
-                    if (product.IsEditable) {
+                    if (product.IsEditable && product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
+
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+
+                    }
+                    if (product.IsEditable && !product.IsJoinable) {
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
 
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
@@ -189,7 +216,23 @@
                 }
             });
         }
-
+        function joinProduct(id) {
+            $.ajax({
+                url: '/api/Deals/' + id,
+                type: 'GET',
+                success: function (result) {
+                    alert(result.Name);
+                    $('#EditModal').find('#Id').val(result.Id);
+                    $('#EditModal').find('#Name').val(result.Name);
+                    $('#EditModal').find('#Description').val(result.Description);
+                    $('#EditModal').find('#Payable').val(result.Payable);
+                    $('#EditModal').modal('show');
+                },
+                error: function (result) {
+                    alert("Unable to load Product.")
+                }
+            });
+        }
         function editProduct(id) {
 
             $.ajax({
