@@ -1,0 +1,345 @@
+﻿@using assignment4.Helpers
+@model assignment4.Models.EditableProduct
+
+@{
+    ViewBag.Title = "View Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Current Projects</h2>
+
+<div id="ProductsContainer">
+
+</div>
+
+@*<button id="addProjectButton" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#ProductModal">Add Project</button>*@
+
+<div id="ProductModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add New Project</h4>
+            </div>
+            <div class="modal-body">
+                @using (Ajax.BeginForm("", "api/Deals/", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#ProductModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
+                {
+
+                    <fieldset class="form-group">
+                        <label for="ProductTitle">Project Title</label>
+                        @Html.TextBoxFor(t => t.Name, new { @class = "form-control" })
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="ProductDescription">Project Information</label>
+                        @Html.TextAreaFor(t => t.Description, new { @class = "form-control" })
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="ProductDescription">Project Payable</label>
+                        @Html.PayableDropDownList(t => t.Payable, new SelectList("value", "text"))
+                    </fieldset>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="EditModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Product</h4>
+            </div>
+            <div class="modal-body">
+                @using (Ajax.BeginForm("", "api/Deals/", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#EditModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
+                {
+
+                    <fieldset class="form-group">
+                        @Html.HiddenFor(t => t.Id)
+                        <label for="ProductTitle">Product Title</label>
+                        @Html.TextBoxFor(t => t.Name, new { @class = "form-control" })
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="ProductDescription">Product Information</label>
+                        @Html.TextAreaFor(t => t.Description, new { @class = "form-control" })
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="ProductDescription">Product/Project Information</label>
+                        @Html.PayableDropDownList(t => t.Payable, new SelectList("value", "text"))
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="JoinedMemberList">Joined Member</label>
+                        @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
+                    </fieldset>
+
+                    <button type="submit" class="btn btn-primary">Update</button>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="JoinMemberModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Product</h4>
+            </div>
+            <div class="modal-body">
+                @using (Ajax.BeginForm("", "api/Deals/", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#EditModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
+                {
+                    @Html.HiddenFor(t => t.Id)
+                    <fieldset class="form-group">
+                        
+                        <label for="ProductTitle">Product Title</label>
+                        @Html.TextBoxFor(t => t.Name, new { @class = "form-control" })
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="ProductDescription">Product Information</label>
+                        @Html.TextAreaFor(t => t.Description, new { @class = "form-control" })
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="ProductDescription">Product/Project Information</label>
+                        @Html.PayableDropDownList(t => t.Payable, new SelectList("value", "text"))
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="JoinedMemberList">Joined Member</label>
+                        @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
+                    </fieldset>
+
+                    <button type="submit" class="btn btn-primary">Update</button>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<button id="loadpayProducts" type="button">Pay project only</button>
+<button id="loadunpayProducts" type="button">Unpay project only</button>
+<button id="loadallProducts" type="button">All project</button>
+
+
+@section Scripts
+{
+
+    <script type="text/javascript">
+        // make it work
+        function hideAddProjectButton() {
+            if (!product.IsEditable && product.IsJoinable) {
+                $('#addProjectButton').hide();
+            } else {
+                $('#addProjectButton').show();
+            }
+        }
+
+
+        $("#loadpayProducts").click(function () {
+            loadpayProducts();
+        });
+        $("#loadunpayProducts").click(function () {
+            loadunpayProducts();
+        });
+        $("#loadallProducts").click(function () {
+            loadallProducts();
+        });
+
+
+        $(document).ready(function () {
+            loadallProducts();
+            ////////////
+            loadaddbutton();
+            //Add a function to reload the list when the dialog closes
+            $('#ProductModal').on('hidden.bs.modal', function () {
+                loadallProducts();
+            })
+
+            $('#EditModal').on('hidden.bs.modal', function () {
+                loadallProducts();
+            })
+
+            $('#JoinModal').on('hidden.bs.modal', function () {
+                loadallProducts();
+            })
+        });
+
+        function loadaddbutton(){
+
+            $("#ProductsContainer").empty();
+            $.getJSON("/api/UserInfo/", function (data) {
+                if (rights === true) {
+                    $('#addProjectButton').hide();
+                } else {
+                    $('#addProjectButton').show();
+                }
+            })
+            };
+
+
+        //Make an ajax call to load the tips
+        function loadallProducts() {
+            $("#ProductsContainer").empty();
+            $.getJSON("/api/Deals/", function (data) {
+                $.each(data, function (i, product) {
+                    $("#ProductsContainer").append("<div id='" + product.Id + "' class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>" + product.Name + "</h3></div><div class='panel-body'>" + product.Description +"</div><div></div></div>" );
+                    // Admin
+                    if (product.IsEditable && product.IsJoinable)
+                    {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+                    }
+                    // Leader
+                    if (product.IsEditable && !product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
+
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
+
+                    }
+                    // Seeker
+                    if (!product.IsEditable && product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+                    }
+                });
+            });
+        }
+        //load pay product/project only
+        function loadpayProducts() {
+            $("#ProductsContainer").empty();
+            $.getJSON("/api/Deals/", function (data) {
+                $.each(data, function (i, product) {
+                    if (product.Payable == '0') {
+                        $("#ProductsContainer").append("<div id='" + product.Id + "' class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>" +'Pay-product/project Name :  '+ product.Name +"</h3></div><div class='panel-body'>" + product.Description + "</div><div></div></div>")
+                    }
+
+                    // Admin
+                    if (product.IsEditable && product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+                    }
+                    // Leader
+                    if (product.IsEditable && !product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
+
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
+
+                    }
+                    // Seeker
+                    if (!product.IsEditable && product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+                    }
+
+                });
+            });
+        }
+
+        //load unpay product/project only
+        function loadunpayProducts() {
+            $("#ProductsContainer").empty();
+            $.getJSON("/api/Deals/", function (data) {
+                $.each(data, function (i, product) {
+                    if (product.Payable =='1') {
+                        $("#ProductsContainer").append("<div id='" + product.Id + "' class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>" + 'Unpay-product/project Name :  ' + product.Name + "</h3></div><div class='panel-body'>" + product.Description + "</div><div></div></div>")
+                    };
+
+                    // Admin
+                    if (product.IsEditable && product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+                    }
+                    // Leader
+                    if (product.IsEditable && !product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
+
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");
+
+                    }
+                    // Seeker
+                    if (!product.IsEditable && product.IsJoinable) {
+                        $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:joinProduct(" + product.Id + ");'> Join</a></span>");
+                    }
+                });
+            });
+        }
+        //Make an ajax call to delete a tip
+        function deleteProduct(id) {
+            $.ajax({
+                url: '/api/Deals/' + id,
+                type: 'DELETE',
+                success: function (result) {
+                    loadallProducts();
+                },
+                error: function (result) {
+                    alert("Unable to delete Product.")
+                }
+            });
+        }
+        function joinProduct(id) {
+            $.ajax({
+                url: '/api/Deals/',
+                type: 'POST',
+                data: {
+                    Id : id
+                },
+                success: function (result) {
+                    alert(result.Name);
+                    $('#JoinModal').find('#Id').val(result.Id);
+                    $('#JoinModal').find('#Name').val(result.Name);
+                    $('#JoinModal').find('#Description').val(result.Description);
+                    $('#JoinModal').find('#Payable').val(result.Payable);
+                    $('#JoinModal').find('#JoinedMemberList').val(result.JoinedMemberList);
+                    $('#JoinModal').modal('show');
+                },
+                error: function (result) {
+                    alert("Unable to load Product.")
+                }
+            });
+        }
+        function editProduct(id) {
+
+            $.ajax({
+                url: '/api/Deals/' + id,
+                type: 'GET',
+                success: function (result) {
+                    alert(result.Name);
+                    $('#EditModal').find('#Id').val(result.Id);
+                    $('#EditModal').find('#Name').val(result.Name);
+                    $('#EditModal').find('#Description').val(result.Description);
+                    $('#EditModal').find('#Payable').val(result.Payable);
+                    $('#EditModal').find('#JoinedMemberList').val(result.JoinedMemberList);
+                    $('#EditModal').modal('show');
+                },
+                error: function (result) {
+                    alert("Unable to load Product.")
+                }
+            });
+        }
+
+    </script>
+}

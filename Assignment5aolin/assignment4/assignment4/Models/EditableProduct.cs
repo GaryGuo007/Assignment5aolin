@@ -22,5 +22,17 @@ namespace assignment4.Models
 
 
         public byte[] Version { get; set; }
+
+        /// <summary>
+        /// ///////////+++
+        /// </summary>
+        public EditableProduct()
+        {
+            this.ProductMembership = new HashSet<ProductMembership>();
+        }
+        public virtual ICollection<ProductMembership> ProductMembership { get; set; }
+
+
+
     }
 }

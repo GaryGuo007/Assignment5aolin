@@ -8,7 +8,6 @@ using System.Security.Claims;
 using System.Web.Http;
 using System.Web;
 
-
 namespace assignment4.API
 {
     //[Authorize]
@@ -17,8 +16,11 @@ namespace assignment4.API
         // GET api/<controller>
         public List<EditableProduct> Get()
         {
+
+            List<EditableProduct> products = null;
+            //var userId= User.Identity.Name;
             if (HttpContext.Current.Cache["ProductList"] != null)
-                return (List<EditableProduct>)HttpContext.Current.Cache["ProductList"];
+                products = (List<EditableProduct>)HttpContext.Current.Cache["ProductList"];
 
             using (Assignment4Context context = new Assignment4Context())
             {
@@ -27,38 +29,41 @@ namespace assignment4.API
                 var isSeeker = this.User.IsInRole("Seeker");
 
                 var userId = ((ClaimsPrincipal)this.User).FindFirst(ClaimTypes.NameIdentifier).Value;
-                List<EditableProduct> products = context.Products.Select(t => new EditableProduct { IsJoinable = isSeeker, IsEditable = isAdmin, Id = t.Id, AddedDate = t.AddedDate, ApplicationUserId = t.ApplicationUserId, Payable = t.Payable, Description = t.Description, Name = t.Name }).ToList();
-                HttpContext.Current.Cache["ProductList"] = products;
-               if (!isAdmin)
+                if (products == null)
                 {
-                    foreach (EditableProduct product in products)
+                    products = context.Products.Select(t => new EditableProduct { IsJoinable = isSeeker, IsEditable = isAdmin, Id = t.Id, AddedDate = t.AddedDate, ApplicationUserId = t.ApplicationUserId, Payable = t.Payable, Description = t.Description, Name = t.Name }).ToList();
+                    HttpContext.Current.Cache["ProductList"] = products;
+                }
+
+                foreach (EditableProduct product in products)
+                {
+                    product.IsJoinable = isSeeker;
+                    ///  if (product.ApplicationUserId == userId)
+                    //  {
+                    //    product.IsEditable = true;
+                    if (User.IsInRole("Admin") || (product.ApplicationUserId == userId))
                     {
-                        product.IsJoinable = isSeeker;
-                        if (product.ApplicationUserId == userId)
-                        {
-                            //    product.IsEditable = true;
-                            if (User.IsInRole("Admin") || (product.ApplicationUserId == userId))
-                            {
-                                product.IsEditable = true;
-                                product.IsJoinable = true;
-                            }
-                            if (User.IsInRole("Seeker") || (product.ApplicationUserId == userId))
-                            {
-                                product.IsEditable = false;
-                                product.IsJoinable = true;
-                            }
-                            if (User.IsInRole("Leader") || (product.ApplicationUserId == userId))
-                            {
-                                product.IsEditable = true;
-                                product.IsJoinable = false;
-                            }
-                        }
+                        product.IsEditable = true;
+                        product.IsJoinable = false;
+                    }
+                    if (User.IsInRole("Seeker") || (product.ApplicationUserId == userId))
+                    {
+                        product.IsEditable = false;
+                        product.IsJoinable = true;
+                    }
+                    if (User.IsInRole("Leader") && (product.ApplicationUserId == userId))
+                    {
+                        product.IsEditable = true;
+                        product.IsJoinable = false;
                     }
                 }
+                // }
+
                 return products;
             }
         }
 
+    
         // GET api/<controller>/5
         public EditableProduct Get(int id)
         {
@@ -68,7 +73,7 @@ namespace assignment4.API
             using (Assignment4Context context = new Assignment4Context())
             {
                 Product product = context.Products.Find(id);
-                var eProduct = new EditableProduct { /*JoinedMemberList = product.JoinedMemberList,*/ IsJoinable = false, IsEditable = false, Version = product.Timestamp, Id = product.Id, AddedDate = product.AddedDate, ApplicationUserId = product.ApplicationUserId, Payable = product.Payable, Description = product.Description, Name = product.Name };
+                var eProduct = new EditableProduct {  IsJoinable = false, IsEditable = false, Version = product.Timestamp, Id = product.Id, AddedDate = product.AddedDate, ApplicationUserId = product.ApplicationUserId, Payable = product.Payable, Description = product.Description, Name = product.Name };
                 HttpContext.Current.Cache["Product" + id] = eProduct;
                 if (User.IsInRole("Admin") || (product.ApplicationUserId == userId))
                 {
@@ -92,13 +97,6 @@ namespace assignment4.API
 
         public HttpResponseMessage Post([FromBody]EditableProduct value)
         {
-            // make it work
-            if (User.IsInRole("Seeker"))
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Seeker Can't add project" });
-            }
-
-
             try
             {
                 var userId = ((ClaimsPrincipal)this.User).FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -118,6 +116,22 @@ namespace assignment4.API
                         context.SaveChanges();
                         HttpContext.Current.Cache.Remove("ProductList");
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Product Added." });
+                    }
+                    else if (User.IsInRole("Seeker"))
+                    {
+                        var productMemberShip = context.ProductMembership.Create();
+                        var product = context.Products.Find(value.Id);
+                        //product.JoinedMemberList = product.JoinedMemberList.Union
+                        //    (User.Identity.Name.ToList());
+                        //product.JoinedMemberList += userId;
+                        productMemberShip.ProductId = value.Id;
+                        //productMemberShip.Name = value.Name;  // project title
+                        productMemberShip.UserId = User.Identity.Name; // user email
+                        context.ProductMembership.Add(productMemberShip);
+                        context.SaveChanges();
+                        //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Seeker Can't add project" });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "You have joined this project." });
+
                     }
                     else
                     {
@@ -144,16 +158,45 @@ namespace assignment4.API
             }
             catch (Exception e)
             {
-              return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error Occurred. Scary Details:" + e.Message });
-           }
-           
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error Occurred. Scary Details:" + e.Message });
+            }
+
         }
+
+        //public HttpResponseMessage Post([FromBody]ProductMembership value)
+        //{
+        //    try
+        //    {
+        //        var userId = ((ClaimsPrincipal)this.User).FindFirst(ClaimTypes.NameIdentifier).Value;
+        //        using (Assignment4Context context = new Assignment4Context())
+        //        {
+        //            if (User.IsInRole("Seeker"))
+        //            {
+
+        //                var productMemberShip = context.ProductMembership.Create();
+        //                productMemberShip.ProductId = value.ProductId;
+        //                productMemberShip.UserId = userId;
+        //                context.ProductMembership.Add(productMemberShip);
+        //                context.SaveChanges();
+
+        //                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Joined." });
+        //            }
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Seeker not joined" });
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error Occurred. Scary Details:" + e.Message });
+        //    }
+
+        //}
 
         public HttpResponseMessage Delete(int id)
         {
             using (Assignment4Context context = new Assignment4Context())
             {
-              //  if (!User.IsInRole("Seeker"))
+                //  if (!User.IsInRole("Seeker"))
                 {
                     var product = context.Products.Find(id);
                     context.Products.Remove(product);

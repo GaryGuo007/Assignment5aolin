@@ -9,6 +9,12 @@ namespace assignment4.Models
 {
     public class Product
     {
+        public Product()
+        {
+            this.ProductMembership = new HashSet<ProductMembership>();
+        }
+        public virtual ICollection<ProductMembership> ProductMembership { get; set; }
+
         public int Id { get; set; }
         [Required]
         public String Name { get; set; }
@@ -16,7 +22,7 @@ namespace assignment4.Models
         public String ApplicationUserId { get; set; }
         public String Payable { get; set; }
         public DateTime AddedDate { get; set; }
-        public string[] JoinedMemberList{get;set;}
+        public String[] JoinedMemberList{get;set;}
        
         [Timestamp]
         public byte[] Timestamp { get; set; }

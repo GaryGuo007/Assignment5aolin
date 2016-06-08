@@ -18,6 +18,8 @@ namespace assignment4.Models
         }
 
         public virtual DbSet<Product> Products { get; set; }
+
+        public virtual DbSet<ProductMembership> ProductMembership { get; set; }
         public static Assignment4Context Create()
         {
             return new Assignment4Context();
