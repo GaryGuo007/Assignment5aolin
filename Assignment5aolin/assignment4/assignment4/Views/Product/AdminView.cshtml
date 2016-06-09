@@ -91,7 +91,7 @@
     </div>
 </div>
 
-<div id="JoinMemberModal" class="modal fade" role="dialog">
+<div id="JoinModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -99,7 +99,7 @@
                 <h4 class="modal-title">Edit Product</h4>
             </div>
             <div class="modal-body">
-                @using (Ajax.BeginForm("", "api/Deals/JoinMember", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#EditModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
+                @using (Ajax.BeginForm("", "api/Deals/JoinMember", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#JoinModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
                 {
 
                     <fieldset class="form-group">
@@ -120,7 +120,7 @@
                         @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
                     </fieldset>
 
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary">Join</button>
                 }
             </div>
             <div class="modal-footer">
@@ -139,22 +139,14 @@
 <button id="loadpayProducts" type="button">Pay project only</button>
 <button id="loadunpayProducts" type="button">Unpay project only</button>
 <button id="loadallProducts" type="button">All project</button>
-@*<form action="../Views/Product/ProductMembershipView">
-    <input type="submit" value="Go to Google">
-</form>*@
+@Html.ActionLink("Product Membership View", "ProductMembership","Product",null,null)
+
 
 @section Scripts
 {
 
     <script type="text/javascript">
-        // make it work
-        //function hideAddProjectButton() {
-        //    if (!product.IsEditable && product.IsJoinable) {
-        //        $('#addProjectButton').hide();
-        //    } else {
-        //        $('#addProjectButton').show();
-        //    }
-        //}
+
 
 
         $("#loadpayProducts").click(function () {
@@ -206,7 +198,7 @@
                 $.each(data, function (i, product) {
                     $("#ProductsContainer").append("<div id='" + product.Id + "' class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>" + product.Name + "</h3></div><div class='panel-body'>" + product.Description +"</div><div></div></div>" );
                     // Admin
-                    if (product.IsEditable && !product.IsJoinable)
+                    if (product.IsEditable && product.IsJoinable)
                     {
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-danger' href='javascript:deleteProduct(" + product.Id + ");'> Delete</a></span>");
                         $("#" + product.Id + " div:nth-child(2)").append("<span style='float:right;'><a class='btn btn-success' href='javascript:editProduct(" + product.Id + ");'> Edit</a></span>");

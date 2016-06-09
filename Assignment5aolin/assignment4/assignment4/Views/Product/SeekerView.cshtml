@@ -75,10 +75,10 @@
                         <label for="ProductDescription">Product/Project Information</label>
                         @Html.PayableDropDownList(t => t.Payable, new SelectList("value", "text"))
                     </fieldset>
-                    <fieldset class="form-group">
+                    @*<fieldset class="form-group">
                         <label for="JoinedMemberList">Joined Member</label>
                         @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
-                    </fieldset>
+                    </fieldset>*@
 
                     <button type="submit" class="btn btn-primary">Update</button>
                 }
@@ -92,7 +92,7 @@
 </div>
 
 
-<div id="JoinMemberModal" class="modal fade" role="dialog">
+<div id="JoinModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -100,7 +100,7 @@
                 <h4 class="modal-title">Edit Product</h4>
             </div>
             <div class="modal-body">
-                @using (Ajax.BeginForm("", "api/Deals/", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#EditModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
+                @using (Ajax.BeginForm("", "api/Deals/", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#JoinModal1').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
                 {
                     @Html.HiddenFor(t => t.Id)
                     <fieldset class="form-group">
@@ -116,12 +116,12 @@
                         <label for="ProductDescription">Product/Project Information</label>
                         @Html.PayableDropDownList(t => t.Payable, new SelectList("value", "text"))
                     </fieldset>
-                    <fieldset class="form-group">
+                    @*<fieldset class="form-group">
                         <label for="JoinedMemberList">Joined Member</label>
                         @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
-                    </fieldset>
+                    </fieldset>*@
 
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary">Join</button>
                 }
             </div>
             <div class="modal-footer">

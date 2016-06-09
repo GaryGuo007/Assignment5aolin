@@ -13,7 +13,7 @@ namespace assignment4.Controllers
     [Authorize]
     public class ProductController : Controller
     {
-        
+
         // GET: Product
         public ActionResult Index()
         {
@@ -28,8 +28,15 @@ namespace assignment4.Controllers
             //else
             //    return View("Index");
         }
-    }
-         
+
+        public ActionResult ProductMembership()
+        {
+            
+            return View("ProductMembershipView");
+        }
+
+
+
         //using (Assignment4Context context = new Assignment4Context())
         //// {
         //        if (this.User.IsInRole("Seeker"))
@@ -39,6 +46,7 @@ namespace assignment4.Controllers
         //                  return View("SeekerView");
         //                 }
         //         }
-          
-    
+
+
+    }
 }

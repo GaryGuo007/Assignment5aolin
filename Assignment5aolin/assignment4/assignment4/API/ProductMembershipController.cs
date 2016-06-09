@@ -41,12 +41,20 @@ namespace assignment4.API
         }
         public HttpResponseMessage Delete(int id)
         {
+
             using (Assignment4Context context = new Assignment4Context())
             {
-                var pmember = context.ProductMembership.Find(id);
-                context.ProductMembership.Remove(pmember);
-                context.SaveChanges();
-                return Request.CreateResponse(HttpStatusCode.OK, "Okay");
+                var couldDelete = User.IsInRole("Admin") || User.IsInRole("Leader");
+                if (couldDelete)
+                {
+                    var pmember = context.ProductMembership.Find(id);
+                    context.ProductMembership.Remove(pmember);
+                    context.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Okay");
+                }
+                else {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Product not added/updated." });
+                }
             }
         }
 

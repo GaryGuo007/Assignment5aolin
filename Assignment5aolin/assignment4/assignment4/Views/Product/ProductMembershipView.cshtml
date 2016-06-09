@@ -23,7 +23,7 @@
         $.getJSON("/api/ProductMembership/", function (data) {
             $.each(data, function (i, pmember)
             {
-                $("#studentList").append("<li>ProductID: " + pmember.ProductId + "UserID: " + pmember.UserId + "<a href='javascript:deletePmember(" + pmember.ID + ");'> Delete </li>");
+                $("#ProductMembershipList").append("<li>ProductID: " + pmember.ProductId + "UserID: " + pmember.UserId + "<a href='javascript:deletePmember(" + pmember.ID + ");'> Delete </li>");
             });
         });
     }

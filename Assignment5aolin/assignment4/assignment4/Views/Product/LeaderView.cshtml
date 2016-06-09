@@ -75,10 +75,10 @@
                         <label for="ProductDescription">Product/Project Information</label>
                         @Html.PayableDropDownList(t => t.Payable, new SelectList("value", "text"))
                     </fieldset>
-                    <fieldset class="form-group">
+                    @*<fieldset class="form-group">
                         <label for="JoinedMemberList">Joined Member</label>
                         @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
-                    </fieldset>
+                    </fieldset>*@
 
                     <button type="submit" class="btn btn-primary">Update</button>
                 }
@@ -142,6 +142,7 @@
 <button id="loadpayProducts" type="button">Pay project only</button>
 <button id="loadunpayProducts" type="button">Unpay project only</button>
 <button id="loadallProducts" type="button">All project</button>
+@Html.ActionLink("Product Membership View", "ProductMembership", "Product", null, null)
 
 
 @section Scripts
