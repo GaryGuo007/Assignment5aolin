@@ -111,7 +111,7 @@ namespace assignment4.API
                         newProduct.Description = value.Description;
                         newProduct.Id = value.Id;
                         newProduct.Payable = value.Payable;
-                        newProduct.JoinedMemberList = value.JoinedMemberList;
+                        //newProduct.JoinedMemberList = value.JoinedMemberList;
                         context.Products.Add(newProduct);
                         context.SaveChanges();
                         HttpContext.Current.Cache.Remove("ProductList");
@@ -129,6 +129,8 @@ namespace assignment4.API
                         productMemberShip.UserId = User.Identity.Name; // user email
                         context.ProductMembership.Add(productMemberShip);
                         context.SaveChanges();
+                        HttpContext.Current.Cache.Remove("ProductList");
+
                         //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Seeker Can't add project" });
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "You have joined this project." });
 
@@ -144,7 +146,7 @@ namespace assignment4.API
                             product.Description = value.Description;
                             product.Id = value.Id;
                             product.Payable = value.Payable;
-                            product.JoinedMemberList = value.JoinedMemberList;
+                           // product.JoinedMemberList = value.JoinedMemberList;
                             context.SaveChanges();
                             HttpContext.Current.Cache.Remove("ProductList");
                             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Product Updated." });

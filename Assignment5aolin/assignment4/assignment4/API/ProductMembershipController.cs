@@ -27,7 +27,7 @@ namespace assignment4.API
         {
             using (Assignment4Context context = new Assignment4Context())
             {
-                return context.ProductMembership.Select(s => new ProductMembershipDTO {    ProductId=s.ProductId, UserId = s.UserId}).ToList();
+                return context.ProductMembership.Select(s => new ProductMembershipDTO { ID = s.ID, ProductId =s.ProductId, UserId = s.UserId}).ToList();
             }
         }
         public ProductMembershipDTO Get(int id)
@@ -35,7 +35,7 @@ namespace assignment4.API
             using (Assignment4Context context = new Assignment4Context())
             {
                 ProductMembership pmember = context.ProductMembership.Find(id);
-                return new ProductMembershipDTO { ProductId = pmember.ProductId, UserId = pmember.UserId };
+                return new ProductMembershipDTO { ID = pmember.ID, ProductId = pmember.ProductId, UserId = pmember.UserId };
             }
 
         }
@@ -44,16 +44,16 @@ namespace assignment4.API
 
             using (Assignment4Context context = new Assignment4Context())
             {
-                var couldDelete = User.IsInRole("Admin") || User.IsInRole("Leader");
+                var couldDelete = (User.IsInRole("Admin") || User.IsInRole("Leader"));
                 if (couldDelete)
                 {
-                    var pmember = context.ProductMembership.Find(id);
+                    ProductMembership pmember = context.ProductMembership.Find(id);
                     context.ProductMembership.Remove(pmember);
                     context.SaveChanges();
                     return Request.CreateResponse(HttpStatusCode.OK, "Okay");
                 }
                 else {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Product not added/updated." });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Project can't be deleted." });
                 }
             }
         }

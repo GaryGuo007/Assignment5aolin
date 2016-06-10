@@ -19,19 +19,16 @@ namespace assignment4.Controllers
         {
             if (User.IsInRole("Admin"))
                 return View("AdminView");
+
             else if (User.IsInRole("Leader"))
                 return View("LeaderView");
+
             else
                 return View("SeekerView");
-            //if (User.IsInRole("Seeker"))
-            //    return View("SeekerView");
-            //else
-            //    return View("Index");
         }
 
         public ActionResult ProductMembership()
         {
-            
             return View("ProductMembershipView");
         }
 

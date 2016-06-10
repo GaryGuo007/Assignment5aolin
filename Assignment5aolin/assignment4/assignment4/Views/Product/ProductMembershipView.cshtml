@@ -1,11 +1,11 @@
 ﻿@using assignment4.Helpers
-@model assignment4.Models.ProductMembership
+@model assignment4.Models.ProductMembershipDTO
 @{
     ViewBag.Title = "ProductMembershipView";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>ProductMembershipView</h2>
+<h2>Project joined Members</h2>
 
 <ul id="ProductMembershipList"></ul>
 
@@ -23,7 +23,7 @@
         $.getJSON("/api/ProductMembership/", function (data) {
             $.each(data, function (i, pmember)
             {
-                $("#ProductMembershipList").append("<li>ProductID: " + pmember.ProductId + "UserID: " + pmember.UserId + "<a href='javascript:deletePmember(" + pmember.ID + ");'> Delete </li>");
+                $("#ProductMembershipList").append("<li>Project ID : " + pmember.ProductId + "     User ID : " + pmember.UserId + "<a href='javascript:deletePmember(" + pmember.ID + ");'> Delete </li>");
             });
         });
     }
