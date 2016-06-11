@@ -15,7 +15,7 @@
 
 @*<button id="addProjectButton" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#ProductModal">Add Project</button>*@
 
-<div id="ProductModal" class="modal fade" role="dialog">
+@*<div id="ProductModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
 
         <div class="modal-content">
@@ -48,10 +48,10 @@
         </div>
 
     </div>
-</div>
+</div>*@
 
 
-<div id="EditModal" class="modal fade" role="dialog">
+@*<div id="EditModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -80,7 +80,7 @@
                         @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
                     </fieldset>*@
 
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    @*<button type="submit" class="btn btn-primary">Update</button>
                 }
             </div>
             <div class="modal-footer">
@@ -89,7 +89,7 @@
         </div>
 
     </div>
-</div>
+</div>*@
 
 
 <div id="JoinModal" class="modal fade" role="dialog">
@@ -100,7 +100,7 @@
                 <h4 class="modal-title">Join Project</h4>
             </div>
             <div class="modal-body">
-                @using (Ajax.BeginForm("", "api/Deals", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#JoinModal1').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
+                @using (Ajax.BeginForm("", "api/Deals", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#JoinModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
                 {
                     @Html.HiddenFor(t => t.Id)
                     <fieldset class="form-group">
