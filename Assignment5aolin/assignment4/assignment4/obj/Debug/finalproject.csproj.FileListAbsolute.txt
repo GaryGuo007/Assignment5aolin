@@ -274,4 +274,3 @@ C:\Users\Gary\Dropbox\final\final\Assignment5aolin\Assignment5aolin\assignment4\
 C:\Users\Gary\Dropbox\final\final\Assignment5aolin\Assignment5aolin\assignment4\assignment4\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 C:\Users\Gary\Dropbox\final\final\Assignment5aolin\Assignment5aolin\assignment4\assignment4\obj\Debug\assignment4.dll
 C:\Users\Gary\Dropbox\final\final\Assignment5aolin\Assignment5aolin\assignment4\assignment4\obj\Debug\assignment4.pdb
-C:\Users\Gary\Dropbox\final\final\Assignment5aolin\Assignment5aolin\assignment4\assignment4\obj\Debug\finalproject.csprojResolveAssemblyReference.cache

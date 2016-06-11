@@ -27,7 +27,7 @@ using System.Web;
                 var hash = Convert.ToBase64String(hashedBytes);
                 return hash;
             }
-            catch (Exception e)
+            catch /*(Exception e)*/
             {
                 return null;
             }

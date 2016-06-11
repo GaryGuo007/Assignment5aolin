@@ -13,9 +13,9 @@
 
 </div>
 
-@*<button id="addProjectButton" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#ProductModal">Add Project</button>*@
+<button id="addProjectButton" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#ProductModal">Add Project</button>
 
-@*<div id="ProductModal" class="modal fade" role="dialog">
+<div id="ProductModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
 
         <div class="modal-content">
@@ -48,10 +48,10 @@
         </div>
 
     </div>
-</div>*@
+</div>
 
 
-@*<div id="EditModal" class="modal fade" role="dialog">
+<div id="EditModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -80,7 +80,9 @@
                         @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
                     </fieldset>*@
 
-                    @*<button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    @Html.ActionLink("  Check Project Joined Members", "ProductMembership", "Product", null, null)
+
                 }
             </div>
             <div class="modal-footer">
@@ -89,23 +91,22 @@
         </div>
 
     </div>
-</div>*@
+</div>
 
 
-<div id="JoinModal" class="modal fade" role="dialog">
+@*<div id="JoinMemberModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Join Project</h4>
+                <h4 class="modal-title">Edit Product</h4>
             </div>
             <div class="modal-body">
-                @using (Ajax.BeginForm("", "api/Deals", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#JoinModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
+                @using (Ajax.BeginForm("", "api/Deals/JoinMember", new AjaxOptions { HttpMethod = "Post", OnSuccess = "$('#EditModal').modal('hide');", OnFailure = "alert('An error occurred, please try again.');" }))
                 {
                     @Html.HiddenFor(t => t.Id)
-                   
-                    @*<fieldset class="form-group">
-                        
+                    <fieldset class="form-group">
+
                         <label for="ProductTitle">Product Title</label>
                         @Html.TextBoxFor(t => t.Name, new { @class = "form-control" })
                     </fieldset>
@@ -120,9 +121,9 @@
                     <fieldset class="form-group">
                         <label for="JoinedMemberList">Joined Member</label>
                         @Html.TextAreaFor(t => t.JoinedMemberList, new { @class = "form-control" })
-                    </fieldset>*@
+                    </fieldset>
 
-                    <button type="submit" class="btn btn-primary">Join</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
                 }
             </div>
             <div class="modal-footer">
@@ -131,7 +132,7 @@
         </div>
 
     </div>
-</div>
+</div>*@
 
 
 
@@ -143,6 +144,7 @@
 <button id="loadpayProducts" type="button">Pay project only</button>
 <button id="loadunpayProducts" type="button">Unpay project only</button>
 <button id="loadallProducts" type="button">All project</button>
+@*@Html.ActionLink("Check Project Joined Members", "ProductMembership", "Product", null, null)*@
 
 
 @section Scripts
@@ -150,13 +152,13 @@
 
     <script type="text/javascript">
         // make it work
-        //function hideAddProjectButton() {
-        //    if (!product.IsEditable && product.IsJoinable) {
-        //        $('#addProjectButton').hide();
-        //    } else {
-        //        $('#addProjectButton').show();
-        //    }
-        //}
+        function hideAddProjectButton() {
+            if (!product.IsEditable && product.IsJoinable) {
+                $('#addProjectButton').hide();
+            } else {
+                $('#addProjectButton').show();
+            }
+        }
 
 
         $("#loadpayProducts").click(function () {
@@ -301,29 +303,24 @@
                 }
             });
         }
-        function joinProduct(id) {
-            $.ajax({
-                url: '/api/Deals/',
-                type: 'POST',
-                data: {
-                    Id: id
-                    
-                },
-                success: function (result) {
-                    //alert(result.Id);
-                    $('#JoinModal').find('#Id').val(result.Id);
-                    //$('#JoinModal').find('#Name').val(result.Name);
-                    //$('#JoinModal').find('#Description').val(result.Description);
-                    //$('#JoinModal').find('#Payable').val(result.Payable);
-                    //$('#JoinModal').find('#JoinedMemberList').val(result.JoinedMemberList);
-                    //$('#JoinModal').modal('show');
-                    alert("You have joined this project");
-                },
-                error: function (result) {
-                    alert("Unable to load Product.")
-                }
-            });
-        }
+        //function joinProduct(id) {
+        //    $.ajax({
+        //        url: '/api/Deals/' + id,
+        //        type: 'GET',
+        //        success: function (result) {
+        //            alert(result.Name);
+        //            $('#JoinModal').find('#Id').val(result.Id);
+        //            $('#JoinModal').find('#Name').val(result.Name);
+        //            $('#JoinModal').find('#Description').val(result.Description);
+        //            $('#JoinModal').find('#Payable').val(result.Payable);
+        //            $('#JoinModal').find('#JoinedMemberList').val(result.JoinedMemberList);
+        //            $('#JoinModal').modal('show');
+        //        },
+        //        error: function (result) {
+        //            alert("Unable to load Product.")
+        //        }
+        //    });
+        //}
         function editProduct(id) {
 
             $.ajax({
